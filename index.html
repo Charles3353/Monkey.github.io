@@ -1,0 +1,247 @@
+<HTML>
+
+<HEAD>
+  <TITLE>Monkey Game</TITLE>
+  <STYLE type='text/css'>
+    #logo1 {
+      position: absolute;
+      top: 500px;
+      left: 500px;
+      width: 120px;
+      height: 150px
+      -webkit-transition: all 50ms ease;
+    }
+
+    #walls {
+      position: fixed;
+      z-index: -99;
+      top: -1px;
+      left: -1px;
+    }
+
+    #ball {
+      width: 50px;
+      height: 50px;
+      background-color: red;
+      border-radius: 25px;
+      position: absolute;
+    }
+
+    #mytext1{
+      font-size: 50px;
+      color: red;
+      font-family: "impact";
+      position : absolute;
+      top:5%;
+      left:10%;
+    }
+    #mytext2{
+      font-size: 100px;
+      color: red;
+      font-family: "monospace;";
+      position : absolute;
+      top: 300px;
+      left: 550px;
+      text-align: center;
+    }
+
+    }
+
+  </STYLE>
+</HEAD>
+
+<BODY onkeydown="myFunction(event)" onload="alwaysTest()">
+  <IMG src="monkeyPics/Background3.png"
+    style="z-index: -100; position: fixed; width: 100%; height: 100%; top: 0px; left: 0px"></IMG>
+
+  <DIV class="btnGroup">
+    <SPAN class="timer">
+      <SPAN style="color: red; font-size: 80px; position: absolute; text-align: center; top: 10px; left: 45%;"
+        id="counter"></SPAN>
+    </SPAN>
+  </DIV>
+
+  <DIV id="walls"><IMG src="monkeyPics/black.jpeg" style="height: 750px; width:15px;"></IMG></DIV>
+  <DIV id="walls"><IMG src="monkeyPics/black.jpeg" style="height: 15px; width:1441px;"></IMG></DIV>
+  <DIV id="walls"><IMG src="monkeyPics/black.jpeg" style="position: absolute; left: 1426px; height: 750px; width:15px;"></IMG>
+  </DIV>
+  <DIV id="walls"><IMG src="monkeyPics/black.jpeg" style="position: absolute; top: 740px; height: 15px; width:1500px;"></IMG></DIV>
+
+  <IMG src="monkeyPics/monkey.png" id='logo1'>
+  <DIV id = "mytext1"></DIV>
+  <DIV id = "mytext2"></DIV>
+
+  <P id="demo"></P>
+
+  <div id="ball"></div>
+
+  <SCRIPT>
+    var running = true;
+    var seconds = 60;
+    var timerOn = false;
+    var hearts = 3;
+    var monkeyx;
+    var monkeyy;
+    var entry = false;
+    var entry1 = false;
+    var audio = new Audio('images/Death.mp3');
+
+    document.getElementById("mytext1").innerHTML = hearts;
+
+
+
+    function alwaysTest(){
+      var element = document.getElementById('logo1'),
+          style = window.getComputedStyle(element),
+          monkeyx = style.getPropertyValue('left');
+          monkeyy = style.getPropertyValue('top')
+      
+    }
+
+
+
+    function myFunction(event) {
+
+      let keysPressed = {};
+      let key = event.key;
+
+      if (key == "a") {
+        var element = document.getElementById('logo1'),
+          style = window.getComputedStyle(element),
+          left = style.getPropertyValue('left');
+          monkeyx = parseInt(left);
+        newleft = parseInt(left) - 20;
+        if (newleft > -1) {
+          document.getElementById('logo1').style.left = newleft;
+        }
+
+      }
+      if (key == "d") {
+        var element = document.getElementById('logo1'),
+          style = window.getComputedStyle(element),
+          left = style.getPropertyValue('left');
+          monkeyx = parseInt(left);
+        newleft = parseInt(left) + 20;
+        if (newleft < 1330) {
+          document.getElementById('logo1').style.left = newleft;
+        }
+      }
+      if (key == "w") {
+        var element = document.getElementById('logo1'),
+          style = window.getComputedStyle(element),
+          top = style.getPropertyValue('top');
+          monkeyy = parseInt(top);
+        newtop = parseInt(top) - 20;
+        if (newtop > -20) {
+          document.getElementById('logo1').style.top = newtop;
+        }
+      }
+
+      if (key == "s") {
+        var element = document.getElementById('logo1'),
+          style = window.getComputedStyle(element),
+          top = style.getPropertyValue('top');
+          monkeyy = parseInt(top);
+        newtop = parseInt(top) + 20;
+        if (newtop < 650) {
+          document.getElementById('logo1').style.top = newtop;
+        }
+      }
+      if (key == "p") {
+        if (timerOn == false) {
+          tick();
+        }
+        seconds = 60;
+        timerOn = true;
+      }
+      if (key == "t") {
+        if (running == true) {
+          running = false;
+        }
+        else {
+          running = true;
+        }
+      }
+    }
+
+    function tick() {
+      var counter = document.getElementById("counter");
+      counter.innerHTML = String(seconds);
+      if (seconds > 0) {
+        setTimeout(tick, 1000);
+        if (running == true) {
+          seconds--;
+        }
+      }
+      else if (seconds == 0) {
+        document.getElementById("mytext2").innerHTML = "You Win";
+        timerOn = false;
+        seconds = 60;
+        XSpeed = 0;
+        YSpeed = 0;
+      }
+    }
+
+    const ball = document.getElementById("ball");
+    let x1 = 0;
+    let y1 = 0;
+    let xSpeed = getRandomSpeed();
+    let ySpeed = getRandomSpeed();
+
+    function getRandomSpeed() {
+      const speed = Math.random() * 20 + 5;
+      return Math.random() < 0.5 ? -speed : speed;
+    }
+
+    function changeSpeed() {
+      xSpeed = getRandomSpeed();
+      ySpeed = getRandomSpeed();
+    }
+
+    function animate() {
+      if(hearts == 0){
+        document.getElementById("mytext2").innerHTML = "You Lose";
+        running = false;
+      }
+      else{
+        x1 += xSpeed;
+        y1 += ySpeed;
+        
+        if (x1 + 50 > window.innerWidth || x1 < 0) {
+            xSpeed = -xSpeed;
+          }
+        if (y1 + 50 > window.innerHeight || y1 < 0) {
+          ySpeed = -ySpeed;
+        }
+
+        if((x1 + 70) > monkeyx && monkeyx > (x1 - 30) && (y1 + 60) > monkeyy && monkeyy > (y1 - 50)){
+          entry1 = true;
+          entry = true;
+        }
+        else{
+          entry = false;
+        }
+
+        if(entry1 == true && entry == false){
+          minusHeart();
+          entry1 = false;
+        }
+        
+        ball.style.left = x1 + "px";
+        ball.style.top = y1 + "px";
+        requestAnimationFrame(animate);
+      }
+    }
+    setInterval(changeSpeed, 1000);
+    animate();
+
+    function minusHeart(){
+      audio.play();
+      hearts -= 1;
+      document.getElementById("mytext1").innerHTML = hearts;
+    }
+
+  </SCRIPT>
+</BODY>
+
+</HTML>
